@@ -7,16 +7,17 @@ WORKDIR /app
 # 复制package.json和package-lock.json
 COPY package*.json ./
 
-# 清理缓存并重新安装依赖
-RUN rm -rf node_modules package-lock.json && \
-    npm install --no-optional && \
-    npm cache clean --force
+# 修复：先清理缓存，再安装依赖（不忽略可选依赖，避免 rollup 缺失）
+RUN npm cache clean --force && \
+    rm -rf node_modules package-lock.json && \
+    npm install 
 
 # 复制源代码
 COPY . .
 
 # 构建应用
-RUN npm run build
+#RUN npm run build
+RUN NODE_OPTIONS=--max-old-space-size=4096 npm run build
 
 # 生产阶段
 FROM nginx:alpine as production-stage

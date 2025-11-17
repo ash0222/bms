@@ -1,7 +1,7 @@
 
-import {createRouter, createWebHistory} from "vue-router"
+import { createRouter, createWebHistory } from "vue-router"
 
-const routes=[
+const routes = [
     {
         path: '/',
         redirect: '/login',
@@ -31,7 +31,7 @@ const routes=[
         name: 'Readerfront',
         component: () => import('../components/ReaderFront.vue')
     },
-    
+
     {
         path: '/admin',
         name: 'Admin',
@@ -72,7 +72,7 @@ const routes=[
                 name: 'Readers',
                 component: () => import('../views/Reader.vue')
             },
-            
+
             {
                 path: 'aviolations',
                 name: 'Aviolations',
@@ -103,7 +103,7 @@ const routes=[
                 name: 'Chat',
                 component: () => import('../components/ChatBot.vue')
             }
-            
+
         ],
         meta: {
             requiresAuth: true
@@ -113,9 +113,9 @@ const routes=[
         path: '/reader',
         name: 'Reader',
         component: () => import('../components/Reader.vue'),
-        children:[ //子路由表
-          {
-                path: 'rpersonalcenter', 
+        children: [ //子路由表
+            {
+                path: 'rpersonalcenter',
                 name: 'Rpersonalcenter',
                 component: () => import('../views/RPersonalCenter.vue')
             },
@@ -125,12 +125,12 @@ const routes=[
                 component: () => import('../views/BookBorrow.vue')
             },
             {
-                path: 'bookreturn', 
+                path: 'bookreturn',
                 name: 'Bookreturn',
                 component: () => import('../views/BookReturn.vue')
             },
             {
-                path: 'rviolation', 
+                path: 'rviolation',
                 name: 'Rviolation',
                 component: () => import('../views/Rviolation.vue')
             },
@@ -155,12 +155,12 @@ const routes=[
                 component: () => import('../components/Donate.vue')
             },
             {
-                path: 'readernotice', 
+                path: 'readernotice',
                 name: 'Readernotice',
                 component: () => import('../views/ReaderNotice.vue')
             },
             {
-                path: 'recording', 
+                path: 'recording',
                 name: 'Recording',
                 component: () => import('../views/Recording.vue')
             },
@@ -169,60 +169,63 @@ const routes=[
                 name: 'ReaderChat',
                 component: () => import('../components/ChatBot.vue')
             }
-        ] // 注意：children数组需要正确闭合
-  },
+        ],// 注意：children数组需要正确闭合
+        meta: {
+            requiresAuth: true
+        }
+    },
     {
         path: '/super',
         name: 'Super',
         component: () => import('../components/Super.vue'),
-        children:[
+        children: [
             {
                 path: '',
                 name: 'FrontIndex',
                 component: () => import('../views/Index.vue'),
             },
-             {
+            {
                 path: 'superadmin',
                 name: 'Superadmin',
                 component: () => import('../views/SuperAdmin.vue')
-             },
-              {
+            },
+            {
                 path: 'notice',
                 name: 'Notice',
                 component: () => import('../views/SuperNotice.vue')
-             },
-              {
+            },
+            {
                 path: 'knowledge',
                 name: 'SuperKnowledge',
                 component: () => import('../views/Knowledge.vue')
-             },
-              {
+            },
+            {
                 path: 'datas',
                 name: 'SuperDatas',
                 component: () => import('../views/Data.vue')
-             },
-              {
+            },
+            {
                 path: 'spersonalcenter',
                 name: 'Sersonalcenter',
                 component: () => import('../views/SPersonalCenter.vue')
-             },
-             {
+            },
+            {
                 path: 'chat',
                 name: 'SuperChat',
                 component: () => import('../components/ChatBot.vue')
-             }
-            ],
+            }
+        ],
         meta: {
             requiresAuth: true
         }
     },
-    
+
 ]
 
 const router = createRouter({
     history: createWebHistory(),
     routes,
-  })
+})
 
 function isAuthenticated() {
     // 兼容多种历史存储键，统一判定登录态
@@ -234,15 +237,15 @@ function isAuthenticated() {
 //全局前置守卫
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
-        if (to.name !=="Login" && !isAuthenticated()) { // 假设这是一个检查用户是否已登录的函数
+        if (to.name !== "Login" && !isAuthenticated()) { // 假设这是一个检查用户是否已登录的函数
             next({ path: '/' }); // 用户未登录，重定向到首页
         } else {
             next(); //用户已登录，继续导航
         }
-        } else {
-            next(); //确保一定要调用 next()
+    } else {
+        next(); //确保一定要调用 next()
     }
 })
 
-  //导出路由对象
-  export default router
+//导出路由对象
+export default router

@@ -11,6 +11,7 @@
             :rules="registerRules"
             label-width="0"
             class="register-el-form"
+            @submit.prevent
           >
             <!-- 身份选择 -->
             <el-form-item prop="identity" class="r-input">
@@ -22,14 +23,7 @@
                   <option value="super">超级管理员</option>
                 </select>
               </div>
-            <!-- </el-form-item>
-            
-            <el-form-item prop="id" class="r-input">
-              <input 
-                type="text" 
-                placeholder="ID" 
-                v-model="registerForm.id"
-              /> -->
+        
             </el-form-item> 
             <!-- 姓名输入 -->
             <el-form-item prop="name" class="r-input">
@@ -40,13 +34,13 @@
               />
             </el-form-item>
             <!-- 性别选择 -->
-            <el-form-item prop="gender" class="r-input">
-              <div class="select-box-r">
-                <select v-model="registerForm.gender" class="identity-select">
-                  <option value="" disabled selected>请选择性别</option>
-                  <option value="男">男</option>
-                  <option value="女">女</option>
-                </select>
+            <el-form-item prop="gender" class="r-input gender-item">
+              <div class="radio-group-r">
+                <el-radio-group v-model="registerForm.gender" class="gender-radio" @click.stop>
+                  <span>性别</span>
+                  <el-radio label="女" class="radio-item">女</el-radio>
+                  <el-radio label="男" class="radio-item">男</el-radio>
+                </el-radio-group>
               </div>
             </el-form-item>
             <!-- 登录名输入 -->
@@ -85,11 +79,13 @@
             <el-form-item prop="date" class="r-input">
               <input 
                 type="date" 
-                v-model="registerForm.date"
+                :value="currentDate"
+                disabled
+                style = "cursor: default; text-align: center;"
               />
             </el-form-item>
             <div  class="register">
-            <button @click="RsubmitForm(registerFormRef)">注册</button>
+            <button type="button" @click="RsubmitForm(registerFormRef)">注册</button>
             </div>
           </el-form>
         </div>
@@ -169,6 +165,7 @@ import { ElMessage } from 'element-plus'
 import $api from '../axios'
 import qs from 'qs'
 import { useRouter } from 'vue-router'
+import { computed } from 'vue'
 const router = useRouter()
 const loginForm = reactive({
     identity: '',
@@ -274,9 +271,7 @@ const registerForm = reactive({
   loginName:'',
   password:'' ,
   phone:'',
-  email:'',
-  date:'',
-
+  email:''
 })
 const registerRules = reactive({
     identity:[
@@ -302,11 +297,11 @@ const registerRules = reactive({
     ],
     email:[
         {required:true,message:'请输入邮箱',trigger:'blur'}
-    ],
-    date:[
-        {required:true,message:'请选择注册日期',trigger:'blur'}
     ]
 
+})
+const currentDate = computed(() => {
+  return new Date().toISOString().split('T')[0];
 })
 const RsubmitForm =  async (formEl: FormInstance | undefined) => {
     if(!formEl) return
@@ -352,6 +347,7 @@ const RsubmitForm =  async (formEl: FormInstance | undefined) => {
   margin: 0;
   padding: 0;
 } 
+
 /* 按钮容器样式：确保与输入框宽度一致，垂直排列 */
 .button-group {
   width: 100%; /* 继承父容器宽度 */
@@ -408,6 +404,7 @@ input:focus::placeholder {
   margin: -20px 0;
   margin-left: -50px;
 }
+
 .register-el-form .el-form-item{
   width:120%;
 }
@@ -422,6 +419,62 @@ input:focus::placeholder {
 .select-box-r{
   width: 70%;
 }
+
+
+.gender-item {
+  width: 70%;
+  padding: 0 10px;
+  /* border-bottom: rgb(64, 101, 153, 0.5) 1px solid; */
+}
+
+.radio-group-r {
+  width: 75%;
+  display: flex;
+  align-items: center;
+  margin-left: -10px;
+  padding-top: 8px;
+  margin-bottom: 10px;
+}
+.radio-group-r span {
+  color: rgb(64, 101, 153, 0.5);
+  font-size: 14px;
+  margin: 0 10px 0 10px;
+  white-space: nowrap;
+}
+.gender-radio {
+  width: 100%;
+  display: flex;
+  /* align-items: center; */
+  border-bottom: 1px solid rgba(64, 101, 153, 0.4);
+  padding-bottom: 5px;
+  
+}
+.gender-radio .el-radio {
+  color: rgb(64, 101, 153, 0.5);
+  margin: 0 auto;
+}
+
+/* 5. 单选框基础样式（清除默认+统一样式） */
+:deep(.gender-radio .radio-item) {
+  /* 隐藏默认圆形按钮 */
+  &.is-checked .el-radio__inner {
+    /* display: none; */
+    background-color: #406599; /* 选中时圆形背景色 */
+    border-color: #406599;
+  }
+  /* 选中状态 */
+  &.is-checked .el-radio__label {
+    color: #406599;
+  }
+
+  &:hover:not(.is-checked) .el-radio__inner {
+    border-color: #406599;
+  }
+  &:hover:not(.is-checked) .el-radio__label {
+    color: #406599;
+  }
+}
+
 .login-input {
   width: 90%;
   margin: 8px 0;
@@ -473,16 +526,16 @@ input:focus::placeholder {
 }
 
 
-
 .identity-select {
   width: 100%;
-  padding: 10px;
+  /* padding: 10px; */
   background-color: transparent;
   border: none;
   border-bottom: 1px solid rgba(64, 101, 153, 0.4);
-  color: #406599;
+  color: rgb(64, 101, 153, 0.5);
   letter-spacing: 2px;
   font-size: 14px;
+  padding-left: 6px;
 }
 
 button:hover {
